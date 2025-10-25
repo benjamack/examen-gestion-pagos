@@ -86,3 +86,23 @@ def test_credit_card_pending_constraint(tmp_path, monkeypatch):
         payment_id="pay-cc-2", amount=50, payment_method="credit_card"
     )
     assert second.status == main.STATUS_REGISTRADO
+
+
+def test_cancel_payment_flow(tmp_path, monkeypatch):
+    setup_temp_store(tmp_path, monkeypatch)
+
+    payment = main.register_payment(
+        payment_id="cancel-1", amount=300, payment_method="paypal"
+    )
+    assert payment.status == main.STATUS_REGISTRADO
+
+    canceled = main.cancel_payment(payment_id="cancel-1")
+    assert canceled.status == main.STATUS_CANCELADO
+
+    with pytest.raises(main.HTTPException):
+        main.update_payment(
+            payment_id="cancel-1", amount=200, payment_method="paypal"
+        )
+
+    with pytest.raises(main.HTTPException):
+        main.pay_payment(payment_id="cancel-1")

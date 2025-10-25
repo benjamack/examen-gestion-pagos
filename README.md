@@ -38,6 +38,7 @@ Los tests cubren el flujo completo de un pago con tarjeta de crédito, los lími
 | POST | `/payments/{payment_id}/update` | Actualiza monto y método si el pago sigue `REGISTRADO`. |
 | POST | `/payments/{payment_id}/pay` | Ejecuta la validación y marca el pago como `PAGADO` o `FALLIDO`. |
 | POST | `/payments/{payment_id}/revert` | Permite volver un pago `FALLIDO` a `REGISTRADO`. |
+| POST | `/payments/{payment_id}/cancel` | Marca un pago `REGISTRADO` como `CANCELADO`. |
 
 `payment_method` acepta `credit_card` o `paypal` (case insensitive).
 
@@ -46,14 +47,14 @@ Los tests cubren el flujo completo de un pago con tarjeta de crédito, los lími
 - **Tarjeta de crédito**: el monto debe ser menor a $10.000 y no puede existir otro pago con tarjeta en estado `REGISTRADO`.
 - **PayPal**: el monto debe ser menor a $5.000.
 - Si la validación falla el pago pasa a `FALLIDO` y la API responde 400 con el motivo.
-- Solo se pueden modificar pagos en `REGISTRADO`. Solo se pueden pagar pagos en `REGISTRADO`. Solo se pueden revertir pagos en `FALLIDO`.
+- Solo se pueden modificar pagos en `REGISTRADO`. Solo se pueden pagar pagos en `REGISTRADO`. Solo se pueden revertir pagos en `FALLIDO`. Los pagos `REGISTRADO` también pueden pasar a `CANCELADO`, estado final que no admite otras transiciones.
 
 ## Decisiones de diseño y supuestos
 
 1. **Persistencia mínima**: se usa `data.json` como almacén plano para simplificar la evaluación. Los helpers normalizan su existencia y guardan los cambios con `indent=2` para facilitar inspección manual.
 2. **Normalización de métodos de pago**: todos los métodos se almacenan en minúsculas para evitar duplicados lógicos por casing distinto.
 3. **Validación en el momento del pago**: las reglas de negocio se aplican cuando se invoca `/pay`, tal como indica el flujo del enunciado. No obstante, la restricción de exclusividad de tarjeta de crédito también se comprueba al registrar/actualizar para evitar estados inválidos.
-4. **Estados explícitos**: se modelan los estados `REGISTRADO`, `PAGADO` y `FALLIDO` como constantes para compartirlos entre la API y los tests.
+4. **Estados explícitos**: se modelan los estados `REGISTRADO`, `PAGADO`, `FALLIDO` y `CANCELADO` como constantes para compartirlos entre la API y los tests.
 5. **Supuesto de trabajo en equipo**: se documenta cómo correr el servidor y las pruebas para que pueda integrarse en un pipeline de CI/CD o revisarse mediante PRs.
 
 ## Próximos pasos sugeridos
