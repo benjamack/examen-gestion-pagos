@@ -8,6 +8,7 @@ from pydantic import BaseModel
 STATUS_REGISTRADO = "REGISTRADO"
 STATUS_PAGADO = "PAGADO"
 STATUS_FALLIDO = "FALLIDO"
+STATUS_CANCELADO = "CANCELADO"
 
 PAYMENT_METHOD_CREDIT_CARD = "credit_card"
 PAYMENT_METHOD_PAYPAL = "paypal"
@@ -201,6 +202,19 @@ def revert_payment(payment_id: str) -> Payment:
         raise HTTPException(status_code=400, detail="Solo se pueden revertir pagos FALLIDOS")
 
     payment["status"] = STATUS_REGISTRADO
+    data[payment_id] = payment
+    save_all_payments(data)
+    return Payment(payment_id=payment_id, **payment)
+
+
+@app.post("/payments/{payment_id}/cancel", response_model=Payment)
+def cancel_payment(payment_id: str) -> Payment:
+    data = load_all_payments()
+    payment = get_payment_or_404(payment_id, data)
+    if payment["status"] != STATUS_REGISTRADO:
+        raise HTTPException(status_code=400, detail="Solo se pueden cancelar pagos REGISTRADOS")
+
+    payment["status"] = STATUS_CANCELADO
     data[payment_id] = payment
     save_all_payments(data)
     return Payment(payment_id=payment_id, **payment)
