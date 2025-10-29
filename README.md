@@ -16,10 +16,9 @@ pip install -r requirements.txt
 ## Ejecución del servidor
 
 ```bash
-fastapi dev main.py
+uvicorn main:app --reload
 ```
-
-La documentación interactiva quedará disponible en http://127.0.0.1:8000/docs.
+La API se accede mediante el siguiente puerto http://127.0.0.1:8000/docs.
 
 ## Pruebas automatizadas
 
@@ -57,8 +56,3 @@ Los tests cubren el flujo completo de un pago con tarjeta de crédito, los lími
 4. **Estados explícitos**: se modelan los estados `REGISTRADO`, `PAGADO`, `FALLIDO` y `CANCELADO` como constantes para compartirlos entre la API y los tests.
 5. **Supuesto de trabajo en equipo**: se documenta cómo correr el servidor y las pruebas para que pueda integrarse en un pipeline de CI/CD o revisarse mediante PRs.
 
-## Próximos pasos sugeridos
-
-- Agregar autenticación y autorización si la API se expone públicamente.
-- Reemplazar el almacenamiento basado en archivos por una base de datos persistente con transacciones.
-- Añadir validaciones adicionales (por ejemplo, límites diarios por usuario o moneda) según evolucione la consigna.
