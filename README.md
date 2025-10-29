@@ -56,3 +56,8 @@ Los tests cubren el flujo completo de un pago con tarjeta de crédito, los lími
 4. **Estados explícitos**: se modelan los estados `REGISTRADO`, `PAGADO`, `FALLIDO` y `CANCELADO` como constantes para compartirlos entre la API y los tests.
 5. **Supuesto de trabajo en equipo**: se documenta cómo correr el servidor y las pruebas para que pueda integrarse en un pipeline de CI/CD o revisarse mediante PRs.
 
+## Patrones de diseño utilizados
+
+- **Data Transfer Object (DTO)**: `Payment` (modelo Pydantic) encapsula la representación expuesta por la API y asegura validaciones de formato consistentes.
+- **Repositorio liviano**: los helpers `load_all_payments` y `save_all_payments` concentran el acceso a `data.json`, aislando al resto de la lógica de la persistencia.
+- **Estrategia por método de pago**: `validate_payment` delega en `validate_credit_card` y `validate_paypal`, manteniendo separadas las reglas de negocio por canal.
