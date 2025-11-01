@@ -3,6 +3,7 @@ from pathlib import Path
 from typing import Dict, Iterable, List
 
 from fastapi import FastAPI, HTTPException, Query
+from fastapi.responses import RedirectResponse
 from pydantic import BaseModel
 
 STATUS_REGISTRADO = "REGISTRADO"
@@ -116,6 +117,11 @@ def get_payment_or_404(payment_id: str, data: Dict[str, Dict]) -> Dict:
 
 
 # --- Endpoints -----------------------------------------------------------
+
+
+@app.get("/", include_in_schema=False)
+def root() -> RedirectResponse:
+    return RedirectResponse(url="/docs")
 
 
 @app.get("/payments", response_model=List[Payment])
