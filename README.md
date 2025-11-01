@@ -18,15 +18,21 @@ Proyecto desarrollado como parte del examen de la materia Ingeniería de Softwar
 python -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
-uvicorn main:app --reload
 ```
 
 ## Ejecución del servidor
 
+### Modo local
+
 ```bash
 uvicorn main:app --reload
 ```
-Se accede a la URL pública de la API mediante el siguiente puerto: http://127.0.0.1:8000/docs.
+La documentación interactiva queda disponible en http://127.0.0.1:8000/docs.
+
+### Despliegue en Render
+
+1. Asegurate de pushear a la rama `main` (o usar “Deploy latest commit” desde el panel del servicio).
+2. Render ejecuta `uvicorn main:app --host 0.0.0.0 --port $PORT` y publica la app en https://examen-gestion-pagos.onrender.com/ (la ruta raíz redirige automáticamente a `/docs`).
 
 ## Pruebas automatizadas
 
